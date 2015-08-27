@@ -1,0 +1,11 @@
+{
+  "name": "SNP_Reporter",
+  "description": "SNP",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "express": "",
+    "socket.io":"",
+    "http":""
+  }
+}

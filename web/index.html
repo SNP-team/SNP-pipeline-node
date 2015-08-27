@@ -1,0 +1,304 @@
+<html>
+	<head>
+		<!-- 新 Bootstrap 核心 CSS 文件 -->
+		<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap.min.css">
+
+		<!-- 可选的Bootstrap主题文件（一般不用引入） -->
+		<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+
+		<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+		<script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+
+		<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+		<script src="http://cdn.bootcss.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+		<script src="epiceditor/js/epiceditor.min.js"></script>
+		<script src='http://cdnjs.cloudflare.com/ajax/libs/coffee-script/1.7.1/coffee-script.min.js'></script>
+		<script src="js/socket.io.js"></script>
+		<!-- <script type="text/coffeescript" src='js/main.coffee' ></script>  
+	-->
+		<script src="js/main.js"></script>
+		<script src="showdown/src/showdown.js"></script>
+		<script src="showdown/src/extensions/twitter.js" ></script>
+		<script src="js/jspdf.min.js" ></script>
+
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>SNP</title>
+		<style>
+			#editor{
+				font-size:16px;
+				height:800px;
+				width:100%;
+			}
+			#show{
+				height : 800px;
+				overflow:auto;
+			}
+			#show>h1,h2,h3,h4{
+				text-align:center;
+			}
+			.mdimg{
+				width:100%;
+			}
+			table{
+				width:100%;
+			}
+		</style>
+
+	</head>
+	<body>
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12">
+					<div class="jumbotron">
+						<h1>SNP</h1>
+						<p>The GUI Reporter for SNP</p>
+						<p><a class="btn btn-primary btn-lg" role="button">Learn more</a></p>
+					</div>
+				</div>
+				<div class="col-md-12">
+					<div class="input-group">
+						<span class="input-group-addon">Path to analysis.jar</span>
+						<input type="text" class="form-control" id="jar" placeholder="Path to analysis.jar" value="/Users/feiyicheng/Desktop/SNP/analysis/out/artifacts/analysis_jar/analysis.jar">
+					</div>
+				</div>
+				<div class="col-md-12">
+					<div class="input-group">
+						<span class="input-group-addon">Path to Home directory</span>
+						<input type="text" class="form-control" id="homedir" placeholder="Path to home directory" value="/Users/feiyicheng/Desktop/SNP">
+					</div>
+				</div>
+				<div class="col-md-12">
+					<div class="input-group">
+						<span class="input-group-addon">Name of Experiment group</span>
+						<input type="text" class="form-control" id="groupname" placeholder="groupname" value="sample">
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-md-6">
+					<div class="input-group">
+						<span class="input-group-addon">
+							PreProcess
+						</span>
+						<input type="text" class="form-control" id="prepro1" value="EA10111_2011-11-09_LocusXDNA_part.csv">
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="input-group">
+						<input type="text" class="form-control" id="prepro2" value="EA10111_2011-06-23_LocusXDNA_part.csv">
+						<span class="input-group-btn">
+							<button class="btn btn-default" type="button" onclick="run00()" >Run0</button>
+						</span>
+					</div>
+				</div>
+				<div class='col-md-12'>
+					<div class="alert alert-info" role="alert">
+						I applied preprocessing script number 1 using the path to EA10111_2011-11-09_LocusXDNA.csv as the inputFilePath and an arbitrary file path for outputFilePath.  I will call the script number 1 output path: outputPath1.
+					</div>
+				</div>
+
+				<div>
+
+					<div class="row editor_row">
+						<div class='col-md-12'>
+							<h2>
+								Edit the text online
+							</h2>
+						</div>
+						<div class='col-md-6'>
+							<textarea id="editor" class="form-control" rows="20" onkeydown="keydown(event)">
+# Report
+
+## ABSTRACT
+
+Using a Bayesian Network framework, we considered 1,140,419 SNPs and CNV across 153 patients, identified a predictive subset of 82 SNPs, created a network-based classifier from these SNPs, and validated the predictive classifier on 6 technical repeats and on an independently run validation set of 16 subject.  On the independent validation set, the network classifier had 81.2% accuracy and an area under the Receiver Operator Characteristic (ROC) curve of 76.6%.  We further describe the 40 SNPs that mapped to 29 gene symbols, and the functional annotations and Gene Ontology terms associated with the gene symbols.
+
+## METHODS
+The analysis was run on an Amazon Web Services Elastic Compute Cloud Quadruple Extra Large Instance running Microsoft Windows Server 2008 on 64-bit architecture with 26 ECU distributed across 8 cores and 68.4 GB of RAM.  Results were generated in five steps: data preparation, gene/cnv loci selection, Bayesian network analysis, and model validation. 
+
+### Data Preparation
+
+This study made use of genetic data from two batches of subjects. The first batch was used as a training set, and the second batch was set aside at the very beginning of the study for use as an independent validation set. This second portion of the data is not used in any capacity until after model selection had been finalized. 
+
+Table 1       | Training Set  |80 / 20 Training | Technical Repeats | Validation Set |Combined Set
+--------------|---------------|-----------------|-------------------|-------------|-------------
+Patients      |153            |123 / 30         |6                  |16           |169
+Accuracy      |99.3% (CV)     | 58% (CV)        |100%               |81.2%        |100% (CV)
+
+The SNPs in the model were mapped to the nearest gene.  Forty SNPs mapped to 29 gene symbols, as shown in Table 2.  Several genes, BEND2, MAGEA11, DIP2B, PKNOX2, and RALGPS1, were associated with multiple SNPs.  Multiple SNPs in the same gene may indicate at that those genes are more influential in mediating OM.
+
+## MaptoGene
+
+
+<div id="maptogene"></div>
+## GOterm
+<div id="GOterm"></div>
+## keywords
+<div id="keywords"></div>
+## figure
+<div id="figure"></div>
+## CONCLUSION
+
+While the predictive power of the network classifier we built does not reach the ‘excellent’ mark, there seem to be several indications that the SNPs we identified are, in fact, meaningful.  The essentially nonexistent predictive power of the 80/20 split of the training data seems to indicate that the most important step in the process is selecting SNPs based on the best information possible.  When the full training data was used, the disparity between cross-validation and independent validation showed the network to be overfit, as may be expected.  That said, the SNPs selected appear to be valid, as the validation set had fair4 accuracy.  In terms of personalized medicine, another small validation set of ~20 independent samples may be useful in confirming these findings, especially since future sets will have the benefit of a more accurate classifier based on the combination of the current training and validation sets.
+
+Elucidating the functions and pathways that these SNPs modulate proved to be a challenge.  Traditional enrichment techniques3,5,6 did not return any results, indicating that no function or pathway was overrepresented in the SNP set that we found.  This is more likely to be due to the small number of gene symbols that the SNPs mapped to, than because the SNPs are not involved in functions or pathway.  In terms of understanding the biology behind OM, we recommend attempting to put the list of gene symbols in contextFigure 3: Analysis of Classification / Misclassification – Principal Component Analysis
+
+
+							</textarea>
+![Figure](http://127.0.0.1:8080/data/figure.jpg)
+						</div>
+						<div class='col-md-6'>
+							<div id="show" ></div>
+						</div>
+						<div class='col-md-12'>
+							<iframe id="preview-pane" type="application/pdf" width="100%" height="650" frameborder="0" style="position:relative;z-index:999" src="blob:file:///5a1ef9a3-b5b2-45f1-8d0c-83ff993eb334"></iframe>
+						</div>
+					</div>
+					<div class='col-md-12'>
+						<h2>Log</h2>
+						<ul class="list-group" id="log">
+						</ul>
+						<br/>
+						<br/>
+						<br/>
+						<br/>
+						<br/>
+					</div>
+				</div>
+			</div>
+		</div>
+		<nav class="navbar navbar-default navbar-fixed-bottom" role="navigation">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<a class="navbar-brand" href="#">Console</a>
+				<ul class="nav navbar-nav">
+					<li>
+					<a href="#" >Finder</a>
+					</li>
+					<li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown">Run<span class="caret"></span></a>
+					<ul class="dropdown-menu" role="menu">
+						<li>
+						<a href="javascript:void(0)" onclick="run00()" >Run00</a>
+						</li>
+						<li>
+						<a href="javascript:void(0)" onclick="run01()" >Run01</a>
+						</li>
+						<li>
+						<a href="javascript:void(0)" onclick="run1()" >Run1</a>
+						</li>
+						<li>
+						<a href="javascript:void(0)" onclick="run2()" >Run2</a>
+						</li>
+						<li>
+						<a href="javascript:void(0)" onclick="run3()" >Run3</a>
+						</li>
+						<li>
+						<a href="javascript:void(0)" onclick="run3_1()" >Run3_1</a>
+						</li>
+					</ul>
+					</li>
+					<li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown">Render<span class="caret"></span></a>
+					<ul class="dropdown-menu" role="menu">
+						<li>
+						<a href="javascript:void(0)" onclick="render()" >Render</a>
+						</li>
+						<li>
+						<a href="javascript:void(0)" onclick="renderfile()" >RenderFile</a>
+						</li>
+
+						<li>
+						<a href="javascript:void(0)" onclick="renderfinal()" >Final</a>
+						</li>
+
+						<li>
+						<a href="javascript:void(0)" onclick="savepdf()" >Export PDF</a>
+						</li>
+					</ul>
+					</li>
+				</ul>
+			</div>
+			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+				<ul class="nav navbar-nav navbar-right">
+					<li>
+					<a href="javascript:void(0)" onclick="clearlog()" >Clear</a>
+					</li>
+					<script type="text/coffeescript" >
+						exports = this
+
+						converter = new Showdown.converter
+							'github_flavouring': true
+							'tables': true
+
+						exports.keydown=(event)->
+							if (event.keyCode == 13)
+								render()
+
+						render=()->
+							str = $("#editor").val()
+							html = converter.makeHtml str 
+							$("#show").html html
+							#$("#final").html ''
+							renderfile()
+
+						renderfinal=()->
+							str = $("#editor").val()
+							html = converter.makeHtml str 
+							$("#show").html ''
+							#$("#final").html html
+							renderfile()
+
+						renderfile=()->
+							renderfiletabdou $("#homedir").val()+$("#groupname").val()+"/data/GOterms.txt","GOterm"
+							renderfiletabdou $("#homedir").val()+$("#groupname").val()+"/data/keywords.txt","keywords"
+							renderfiletab $("#homedir").val()+$("#groupname").val()+"/data/maptogene.txt","maptogene"
+							renderfigure $("#figure") 
+
+						exports.render = render
+						exports.renderfile = renderfile
+						exports.renderfile = renderfile
+						exports.renderfinal = renderfinal
+
+						renderfigure = (container)->
+							str = "<img src='" +$("#homedir").val()+ "/data/" +$("#groupname").val()+'/figure.jpg' width=100%>Figure</img>"
+
+							container.html str
+
+						renderchart = (id,chart)->
+							mkchart $("#"+id),chart
+
+						exports.clearlog = ()->
+							$("#log").html("")
+
+					
+						render()
+						renderfile()
+						savepdf()
+
+					</script>
+					<script>
+						$(document).ready(function() {
+							if(jsPDF && jsPDF.version) {
+								$('#dversion').text('Version ' + jsPDF.version.split('T').shift());
+							}
+						});
+
+						function savepdf()
+						{
+							var doc = new jsPDF();
+							doc.fromHTML($('#show').get(0), 21, 29,{'width': 170});
+							var str = doc.output('bloburi');
+							$('#preview-pane').attr('src', str);
+						}
+					</script>
+					<li>
+					<a href="http://www.xuhao1.me">Copyright XuHao</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+		</nav>
+	</body>
+</html>
