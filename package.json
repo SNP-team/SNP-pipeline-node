@@ -6,6 +6,8 @@
   "dependencies": {
     "express": "",
     "socket.io":"",
-    "http":""
+    "http":"",
+    "node-html-pdf":"",
+    "phantomjs":""
   }
 }

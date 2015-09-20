@@ -12,14 +12,24 @@
 		<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
 		<script src="http://cdn.bootcss.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 		<script src="epiceditor/js/epiceditor.min.js"></script>
-		<script src='http://cdnjs.cloudflare.com/ajax/libs/coffee-script/1.7.1/coffee-script.min.js'></script>
-		<script src="js/socket.io.js"></script>
-		<!-- <script type="text/coffeescript" src='js/main.coffee' ></script>  
-	-->
-		<script src="js/main.js"></script>
+		<script src='//cdnjs.cloudflare.com/ajax/libs/coffee-script/1.7.1/coffee-script.min.js'></script>
+		<script src="/socket.io/socket.io.js"></script>
+		<script type="text/coffeescript" src='/js/main.coffee' ></script>
 		<script src="showdown/src/showdown.js"></script>
 		<script src="showdown/src/extensions/twitter.js" ></script>
-		<script src="js/jspdf.min.js" ></script>
+		<!--<script src="js/jspdf.min.js" ></script>-->
+		<script src="jspdf/dist/jspdf.debug.js" ></script>
+		<!--<script type="text/javascript" src="jspdf/jspdf.js"></script>-->
+		<!--<script type="text/javascript" src="jspdf/plugins/standard_fonts_metrics.js"></script>-->
+		<!--<script type="text/javascript" src="jspdf/plugins/split_text_to_size.js"></script>-->
+		<!--<script type="text/javascript" src="jspdf/plugins/from_html.js"></script>-->
+		<!--<script type="text/javascript" src="jspdf/plugins/cell.js"></script>-->
+		<!--<script type="text/javascript" src="jspdf/libs/FileSaver.js"></script>-->
+		<!--<script type="text/javascript" src="jspdf/libs/Blob.js"></script>-->
+		<!--<script type="text/javascript" src="jspdf/libs/png_support/png.js"></script>-->
+		<!--<script type="text/javascript" src="jspdf/libs/png_support/zlib.js"></script>-->
+		<!--<script type="text/javascript" src="jspdf/plugins/addimage.js"></script>-->
+		<!--<script type="text/javascript" src="jspdf/plugins/png_support.js"></script>-->
 
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<title>SNP</title>
@@ -58,7 +68,7 @@
 				<div class="col-md-12">
 					<div class="input-group">
 						<span class="input-group-addon">Path to analysis.jar</span>
-						<input type="text" class="form-control" id="jar" placeholder="Path to analysis.jar" value="/Users/feiyicheng/Desktop/SNP/analysis/out/artifacts/analysis_jar/analysis.jar">
+						<input type="text" class="form-control" id="jar" placeholder="Path to analysis.jar" value="/Users/feiyicheng/baiduyun/Jimyang/HMS/SNP/analysis/dist/analysis.jar">
 					</div>
 				</div>
 				<div class="col-md-12">
@@ -69,8 +79,8 @@
 				</div>
 				<div class="col-md-12">
 					<div class="input-group">
-						<span class="input-group-addon">Name of Experiment group</span>
-						<input type="text" class="form-control" id="groupname" placeholder="groupname" value="sample">
+						<span class="input-group-addon">Path to Home directory</span>
+						<input type="text" class="form-control" id="group" placeholder="groupname" value="sample">
 					</div>
 				</div>
 			</div>
@@ -137,7 +147,7 @@ The SNPs in the model were mapped to the nearest gene.  Forty SNPs mapped to 29 
 ## keywords
 <div id="keywords"></div>
 ## figure
-<div id="figure"></div>
+<div id="figure" class="ignorePDF"><h4>Please see the last page</h4></div>
 ## CONCLUSION
 
 While the predictive power of the network classifier we built does not reach the ‘excellent’ mark, there seem to be several indications that the SNPs we identified are, in fact, meaningful.  The essentially nonexistent predictive power of the 80/20 split of the training data seems to indicate that the most important step in the process is selecting SNPs based on the best information possible.  When the full training data was used, the disparity between cross-validation and independent validation showed the network to be overfit, as may be expected.  That said, the SNPs selected appear to be valid, as the validation set had fair4 accuracy.  In terms of personalized medicine, another small validation set of ~20 independent samples may be useful in confirming these findings, especially since future sets will have the benefit of a more accurate classifier based on the combination of the current training and validation sets.
@@ -146,7 +156,7 @@ Elucidating the functions and pathways that these SNPs modulate proved to be a c
 
 
 							</textarea>
-![Figure](http://127.0.0.1:8080/data/figure.jpg)
+<!-- ![Figure](http://127.0.0.1:8080/data/figure.jpg) -->
 						</div>
 						<div class='col-md-6'>
 							<div id="show" ></div>
@@ -155,6 +165,8 @@ Elucidating the functions and pathways that these SNPs modulate proved to be a c
 							<iframe id="preview-pane" type="application/pdf" width="100%" height="650" frameborder="0" style="position:relative;z-index:999" src="blob:file:///5a1ef9a3-b5b2-45f1-8d0c-83ff993eb334"></iframe>
 						</div>
 					</div>
+					<!--<div class='clo-md-6'><h4>Warning:The figure is not shown in the preview panel, pls see the exported file</h4></div>-->
+
 					<div class='col-md-12'>
 						<h2>Log</h2>
 						<ul class="list-group" id="log">
@@ -237,24 +249,28 @@ Elucidating the functions and pathways that these SNPs modulate proved to be a c
 								render()
 
 						render=()->
+							socket.emit	'serverlog','render called'
 							str = $("#editor").val()
 							html = converter.makeHtml str 
 							$("#show").html html
-							#$("#final").html ''
+							$("#final").html ''
 							renderfile()
 
 						renderfinal=()->
+							socket.emit 'serverlog','renderfinal called'
 							str = $("#editor").val()
 							html = converter.makeHtml str 
 							$("#show").html ''
-							#$("#final").html html
+							$("#final").html html
 							renderfile()
 
 						renderfile=()->
-							renderfiletabdou $("#homedir").val()+$("#groupname").val()+"/data/GOterms.txt","GOterm"
-							renderfiletabdou $("#homedir").val()+$("#groupname").val()+"/data/keywords.txt","keywords"
-							renderfiletab $("#homedir").val()+$("#groupname").val()+"/data/maptogene.txt","maptogene"
-							renderfigure $("#figure") 
+
+							socket.emit 'serverlog','goterm filepath:  '+"data/" + $("#group").val() + "/GOterms.txt"
+							renderfiletab "data/" + $("#group").val() + "/GOterms.txt","GOterm"
+							renderfiletab "data/" + $("#group").val() + "/keywords.txt","keywords"
+							renderfiletab "data/" + $("#group").val() + "/maptogene.txt","maptogene"
+#							renderfigure $("#figure")
 
 						exports.render = render
 						exports.renderfile = renderfile
@@ -262,7 +278,8 @@ Elucidating the functions and pathways that these SNPs modulate proved to be a c
 						exports.renderfinal = renderfinal
 
 						renderfigure = (container)->
-							str = "<img src='" +$("#homedir").val()+ "/data/" +$("#groupname").val()+'/figure.jpg' width=100%>Figure</img>"
+#							str = ""
+							str = "<img src='data/" + $("#group").val() + "/figure.png' width=100%>Figure</img>"
 
 							container.html str
 
@@ -287,10 +304,63 @@ Elucidating the functions and pathways that these SNPs modulate proved to be a c
 
 						function savepdf()
 						{
-							var doc = new jsPDF();
-							doc.fromHTML($('#show').get(0), 21, 29,{'width': 170});
-							var str = doc.output('bloburi');
+							socket.emit('serverlog','savePDF called');
+
+							var doc = new jsPDF('p');
+
+							var elementHandler = {
+								'#ignorePDF': function (element, renderer) {
+									return true;
+								}
+							};
+							$("#figure").html("");
+							var source = $("#show").get(0);
+
+							doc.fromHTML(source.outerHTML, 20, 27,
+									{'width': 170,
+										'elementHandlers': elementHandler
+									});
+//							var str = doc.output('bloburl');
+//							$('#preview-pane').attr('src', str);
+
+							doc.addPage();
+
+							var img = $('<img>', {
+								id:'jpgfigure',
+								src: 'data/' + $("#group").val() + "/figure.jpg"
+//								height: 300
+
+							}).appendTo($("#figure"));
+							socket.emit('serverlog', 'before addimg');
+							doc.addImage(img.get(0), 'jpg',5,50,200,100);
+							socket.emit('serverlog', 'after addimg');
+							var str = doc.output('bloburl');
 							$('#preview-pane').attr('src', str);
+//							doc.save($("#homedir").val()+ "/data/" + $("#group") + "/report.pdf");
+//							doc.save("report.pdf");
+
+//							doc.fromHTML(
+//									source,
+//									15,
+//									15, {
+//										'width': 180,
+//										'elementHandlers': elementHandler
+//									},
+//
+//									function(dispose) {
+//										// dispose: object with X, Y of the last line add to the PDF
+//										//          this allow the insertion of new lines after html
+//										// pdf.save('Test.pdf');
+//
+//										if (navigator.msSaveBlob) {
+//											var string = doc.output('datauristring');
+//										} else {
+//											var string = doc.output('bloburi');
+//										}
+//
+//										$('#preview-pane').attr('src', string);
+//									})
+
 						}
 					</script>
 					<li>

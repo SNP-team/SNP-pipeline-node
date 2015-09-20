@@ -103,6 +103,13 @@ renderfiletab=(file,container)->
 		container:container
 	socket.emit 'needfile',resp
 
+renderfilejpg=(file, container)->
+	resp=
+		filename: file
+		type: 'jpg'
+		container: container
+	socket.emit 'needfile', resp
+
 
 split_tab_dou =(str)->
 	str = str.replace /,/g,'\t'
@@ -128,7 +135,11 @@ socket.on 'file',(data)->
 		mkchart $("#"+container),(split_tab str)
 		console.log 'here'
 
+socket.on 'convertpdffinished', (filename)->
+	alert	"pdf file saved as " + filename
+
 exports = this
+exports.socket = socket
 exports.run00 = run00
 
 exports.run01 = run01
